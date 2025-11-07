@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>WG Infoscreen</title>
+  <style>
+    html, body { margin:0; padding:0; height:100%; overflow:hidden; }
+    iframe { width:100%; height:100%; border:none; }
+  </style>
+</head>
+<body>
+  <iframe id="frame" src="https://sites.google.com/view/wginfoscreen/startseite"></iframe>
+
+  <script>
+    const pages = [
+      "https://sites.google.com/view/wginfoscreen/startseite",
+      "https://sites.google.com/view/wginfoscreen/dienste-termine",
+      "https://sites.google.com/view/wginfoscreen/wetter"
+    ];
+    let i = 0;
+    setInterval(() => {
+      i = (i + 1) % pages.length;
+      document.getElementById("frame").src = pages[i];
+    }, 20000); // alle 20 Sekunden wechseln
+  </script>
+</body>
+</html>
