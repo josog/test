@@ -2,10 +2,10 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>logo! Nachrichten – ZDF</title>
+  <title>logo! Nachrichten – Jugend Infoscreen</title>
   <style>
     body {
-      font-family: 'Comic Sans MS', 'Arial Rounded MT', Arial, sans-serif;
+      font-family: 'Comic Sans MS', Arial, sans-serif;
       background: #eef6ff;
       color: #222;
       padding: 30px;
@@ -48,40 +48,28 @@
 </head>
 <body>
   <div class="container">
-    <h2>🧡 logo! – Nachrichten für euch</h2>
+    <h2>🧡 logo! – Nachrichten für Jugendliche</h2>
     <div id="news">Lade aktuelle Nachricht...</div>
   </div>
 
   <script>
     async function ladeNachricht() {
-      const feedUrl = "https://www.zdf.de/rss/logo.xml";
-      const response = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(feedUrl));
-      const data = await response.json();
-
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(data.contents, "application/xml");
-      const items = xml.querySelectorAll("item");
-
-      const zufall = Math.floor(Math.random() * items.length);
-      const item = items[zufall];
-
-      const title = item.querySelector("title")?.textContent || "";
-      const link = item.querySelector("link")?.textContent || "#";
-      const desc = item.querySelector("description")?.textContent || "";
-
-      // Logo! nutzt <enclosure url="..."> für das Bild
-      const enclosure = item.querySelector("enclosure");
-      const imageUrl = enclosure?.getAttribute("url") || "";
-
-      const imageHtml = imageUrl
-        ? `<img src="${imageUrl}" alt="Bild zur Nachricht">`
-        : "";
-
-      document.getElementById("news").innerHTML = `
-        ${imageHtml}
-        <div class="headline"><a href="${link}" target="_blank">${title}</a></div>
-        <div class="desc">${desc}</div>
-      `;
+      try {
+        const data = await fetch("logo_news.json").then(r => r.json());
+        if (data.length === 0) {
+          document.getElementById("news").innerHTML = "Keine Nachrichten verfügbar.";
+          return;
+        }
+        const item = data[Math.floor(Math.random() * data.length)];
+        document.getElementById("news").innerHTML = `
+          <img src="${item.img}" alt="">
+          <div class="headline"><a href="${item.link}" target="_blank">${item.title}</a></div>
+          <div class="desc">${item.desc}</div>
+        `;
+      } catch(e) {
+        document.getElementById("news").innerHTML = "Fehler beim Laden der Nachrichten.";
+        console.error(e);
+      }
     }
 
     ladeNachricht();
