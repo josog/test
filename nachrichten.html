@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Aktuelle Nachrichten - Tagesschau</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      color: #111;
+      padding: 20px;
+      text-align: center;
+    }
+    .headline {
+      font-size: 1.6em;
+      margin-bottom: 10px;
+    }
+    .desc {
+      font-size: 1em;
+      color: #444;
+    }
+    a {
+      text-decoration: none;
+      color: #0066cc;
+    }
+  </style>
+</head>
+<body>
+  <h2>Aktuelle Nachricht</h2>
+  <div id="news"></div>
+
+  <script>
+    async function ladeNachricht() {
+      const feedUrl = "https://www.tagesschau.de/xml/rss2";
+      const response = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(feedUrl));
+      const data = await response.json();
+
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(data.contents, "application/xml");
+      const items = xml.querySelectorAll("item");
+
+      const zufall = Math.floor(Math.random() * items.length);
+      const item = items[zufall];
+
+      const title = item.querySelector("title").textContent;
+      const link = item.querySelector("link").textContent;
+      const desc = item.querySelector("description").textContent;
+
+      document.getElementById("news").innerHTML = `
+        <div class="headline"><a href="${link}" target="_blank">${title}</a></div>
+        <div class="desc">${desc}</div>
+      `;
+    }
+
+    ladeNachricht();
+  </script>
+</body>
+</html>
