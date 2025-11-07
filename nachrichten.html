@@ -62,16 +62,27 @@
       const zufall = Math.floor(Math.random() * items.length);
       const item = items[zufall];
 
-      const title = item.querySelector("title").textContent;
-      const link = item.querySelector("link").textContent;
-      const desc = item.querySelector("description").textContent;
-      const enclosure = item.querySelector("enclosure");
+      const title = item.querySelector("title")?.textContent || "";
+      const link = item.querySelector("link")?.textContent || "#";
+      const desc = item.querySelector("description")?.textContent || "";
 
-      let imageHtml = "";
-      if (enclosure && enclosure.getAttribute("url")) {
-        const imageUrl = enclosure.getAttribute("url");
-        imageHtml = `<img src="${imageUrl}" alt="Bild zur Nachricht">`;
+      // Versuch 1: <media:content>
+      let media = item.getElementsByTagName("media:content");
+      let imageUrl = "";
+
+      if (media.length > 0 && media[0].getAttribute("url")) {
+        imageUrl = media[0].getAttribute("url");
+      } else {
+        // Versuch 2: <enclosure>
+        const enclosure = item.querySelector("enclosure");
+        if (enclosure && enclosure.getAttribute("url")) {
+          imageUrl = enclosure.getAttribute("url");
+        }
       }
+
+      const imageHtml = imageUrl
+        ? `<img src="${imageUrl}" alt="Bild zur Nachricht">`
+        : "";
 
       document.getElementById("news").innerHTML = `
         ${imageHtml}
